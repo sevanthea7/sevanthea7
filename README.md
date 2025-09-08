@@ -63,7 +63,7 @@
 
 ## 4. 博客后台截图
 
-![](https://sevanthea7.oss-cn-beijing.aliyuncs.com/QGworks/202509081736094.png)
+![](https://sevanthea7.oss-cn-beijing.aliyuncs.com/QGworks/202509081738167.png)
 
 
 
@@ -71,7 +71,7 @@
 
 仓库地址：https://github.com/sevanthea7
 
-![](https://sevanthea7.oss-cn-beijing.aliyuncs.com/QGworks/202509081732609.png)
+![](https://sevanthea7.oss-cn-beijing.aliyuncs.com/QGworks/202509081737820.png)
 
 
 
