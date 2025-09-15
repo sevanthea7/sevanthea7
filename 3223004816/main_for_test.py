@@ -1,6 +1,6 @@
 import argparse
-from similarity_functions import LCS, edit_dist, jaccard2, simhash_res
-from tool_functions import tokenize, read_file, write_result
+import similarity_functions
+import tool_functions
 
 def similarity_score(orig_path, copy_path):
     # 定义各个相似度指标的权重比例
@@ -12,12 +12,12 @@ def similarity_score(orig_path, copy_path):
     }
 
     # 处理原文
-    orig_text = read_file(orig_path)
-    orig_tokens = tokenize(orig_text)
+    orig_text = tool_functions.read_file(orig_path)
+    orig_tokens = tool_functions.tokenize(orig_text)
 
     # 处理待检测文本
-    copy_text = read_file(copy_path)
-    copy_tokens = tokenize(copy_text)
+    copy_text = tool_functions.read_file(copy_path)
+    copy_tokens = tool_functions.tokenize(copy_text)
 
     # 如果原文空，抛出异常
     if len(orig_tokens) == 0:
@@ -27,18 +27,18 @@ def similarity_score(orig_path, copy_path):
         raise ValueError("待检测文本为空，计算无效")
 
     # LSC计算
-    lcs_len = LCS(orig_tokens, copy_tokens)
+    lcs_len = similarity_functions.LCS(orig_tokens, copy_tokens)
     lcs_sim = lcs_len / len(orig_tokens)    # LCS相似度 = LCS长度 / 原文长度
 
     # 编辑距离计算
-    ed = edit_dist(orig_tokens, copy_tokens)
+    ed = similarity_functions.edit_dist(orig_tokens, copy_tokens)
     ed_sim = 1 - ed / max(len(orig_tokens), len(copy_tokens), 1)    # 编辑距离相似度 = 1 - 编辑距离 / 最大文本长度或1（防止除以零）
 
     # Jaccard计算
-    j2 = jaccard2(orig_tokens, copy_tokens, 2)
+    j2 = similarity_functions.jaccard2(orig_tokens, copy_tokens, 2)
 
     # Simhash计算
-    simhash_sim = simhash_res(orig_tokens, copy_tokens)
+    simhash_sim = similarity_functions.simhash_res(orig_tokens, copy_tokens)
 
     # 加权计算最终相似度得分
     final_score = (percent['lcs'] * lcs_sim +
@@ -57,19 +57,16 @@ def similarity_score(orig_path, copy_path):
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('orig_path', help='原文文件路径')
-    parser.add_argument('copy_path', help='待测试文件路径')
-    parser.add_argument('output_path', help='输出结果文件路径')
-    args = parser.parse_args()
-
-    # 计算相似度
-    score, result = similarity_score(args.orig_path, args.copy_path)
-    # 将最终得分写入输出文件
-    write_result(args.output_path, score)
-
-    print(f"重复率: {score:.2f} %")
-    # print(result)
+    for _ in range(500):
+        similarity_score('test_files/orig.txt', 'test_files/copy.txt')
 
 if __name__ == '__main__':
-    main()
+    import cProfile
+    import pstats
+
+    cProfile.run('main()', 'prof.out')
+
+    p = pstats.Stats('prof.out')
+    p.strip_dirs()
+    p.sort_stats('cumulative')
+    p.print_stats('3223004816')
