@@ -1,4 +1,3 @@
-import argparse
 import similarity_functions
 import tool_functions
 
@@ -27,7 +26,7 @@ def similarity_score(orig_path, copy_path):
         raise ValueError("待检测文本为空，计算无效")
 
     # LSC计算
-    lcs_len = similarity_functions.LCS(orig_tokens, copy_tokens)
+    lcs_len = similarity_functions.lcs(orig_tokens, copy_tokens)
     lcs_sim = lcs_len / len(orig_tokens)    # LCS相似度 = LCS长度 / 原文长度
 
     # 编辑距离计算
@@ -64,9 +63,9 @@ if __name__ == '__main__':
     import cProfile
     import pstats
 
-    cProfile.run('main()', 'prof.out')
+    cProfile.run('main()', 'prof2.out')
 
-    p = pstats.Stats('prof.out')
+    p = pstats.Stats('prof2.out')
     p.strip_dirs()
     p.sort_stats('cumulative')
     p.print_stats('3223004816')

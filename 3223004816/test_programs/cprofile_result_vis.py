@@ -1,4 +1,3 @@
-
 import pstats
 import matplotlib.pyplot as plt
 
@@ -7,7 +6,7 @@ plt.rcParams['font.family'] = ['SimSun']
 plt.rcParams['axes.unicode_minus'] = False
 
 # 读取 cProfile 结果
-p = pstats.Stats('prof.out')
+p = pstats.Stats('prof2.out')
 p.strip_dirs()
 p.sort_stats('cumulative')
 
@@ -19,7 +18,7 @@ for func, stat in p.stats.items():
     filename, lineno, funcname = func
     if filename.endswith('similarity_functions.py') or filename.endswith('tool_functions.py') or filename.endswith('main_for_test.py'):
         funcs.append(funcname)
-        avg_time_ms = (stat[3] / 500) * 1000  # 平均每次 similarity_score 调用耗时 (ms)
+        avg_time_ms = (stat[3] / 500) * 1000  # 平均每次similarity_score调用耗时
         times.append(avg_time_ms)
 
 if not funcs:
@@ -31,6 +30,8 @@ else:
 
     plt.figure(figsize=(10,6))
     bars = plt.barh(funcs_sorted, times_sorted, color='skyblue')
+    for i in range( len(funcs_sorted) ):
+        print(funcs_sorted[i], times_sorted[i])
 
     # 显示条形上的数值
     for bar, time in zip(bars, times_sorted):
