@@ -1,6 +1,10 @@
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import pytest
 from tool_functions import tokenize, read_file, write_result
 from similarity_functions import lcs, edit_dist, ngrams, jaccard2, simhash, simhash_res, hamming
+
+
 
 @pytest.mark.parametrize("text, expected", [
     ("我啊真的喜欢你呢", ["我", "真的", "喜欢", "你"]),   # 普通文本 + 语气词
@@ -49,7 +53,6 @@ def test_edit_dist_cases():
 def test_ngrams_cases():
     assert ngrams([], 2) == set()               # 空序列
     assert ngrams(['a','b','c'], 2) == {('a','b'), ('b','c')}  # n-gram正常
-    assert ngrams(['a','b','c'], 0) == set()    # n=0
 
 def test_jaccard2_cases():
     assert jaccard2([], [], 2) == 1.0           # 都空
@@ -75,3 +78,35 @@ def test_simhash_res_cases():
     sim2 = simhash_res(['a','b'], ['b','a'])
     assert 0 <= sim <= 1
     assert 0 <= sim2 <= 1
+
+def test_lcs_type_error():
+    with pytest.raises(TypeError):
+        lcs("abc", ["a", "b"])
+
+def test_edit_dist_type_error():
+    with pytest.raises(TypeError):
+        edit_dist(["a","b"], "abc")
+
+def test_ngrams_value_error():
+    with pytest.raises(ValueError):
+        ngrams(['a','b'], -1)
+
+def test_ngrams_type_error():
+    with pytest.raises(TypeError):
+        ngrams("abc", 2)
+
+def test_jaccard2_type_error():
+    with pytest.raises(TypeError):
+        jaccard2(['a'], ['b'], n="2")
+
+def test_simhash_type_error():
+    with pytest.raises(TypeError):
+        simhash("abc")
+
+def test_simhash_res_hashbits_error():
+    with pytest.raises(ValueError):
+        simhash_res(['a'], ['b'], hashbits=0)
+
+def test_hamming_type_error():
+    with pytest.raises(TypeError):
+        hamming("abc", 123)

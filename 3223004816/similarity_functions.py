@@ -17,6 +17,12 @@ def lcs(a, b):
     返回:
         int: LCS 的长度
     """
+    if not isinstance(a, list) or not isinstance(b, list):
+        raise TypeError("输入必须为列表")
+    if not all(isinstance(x, str) for x in a + b):
+        raise TypeError("列表元素必须为字符串")
+    if not a or not b:
+        return 0  # 空序列直接返回0
     if not a or not b:  # 如果任意序列为空，LCS 长度为 0
         return 0
 
@@ -48,6 +54,10 @@ def edit_dist(a, b):
     返回:
         int: 编辑距离
     """
+    if not isinstance(a, list) or not isinstance(b, list):
+        raise TypeError("输入必须为列表")
+    if not all(isinstance(x, str) for x in a + b):
+        raise TypeError("列表元素必须为字符串")
     m, n = len(a), len(b)
 
     # 仅保留两行 DP，prev 为上一行，cur 为当前行
@@ -78,6 +88,12 @@ def ngrams( tokens, n ):
     返回:
         set[tuple]: n-gram 集合
     """
+    if not isinstance(tokens, list):
+        raise TypeError("tokens 必须为列表")
+    if not isinstance(n, int):
+        raise TypeError("n 必须为整数")
+    if n <= 0:
+        raise ValueError("n-gram 长度必须大于0")
     if n <= 0:
         return set()
 
@@ -98,6 +114,8 @@ def jaccard2( a, b, n = 2 ):
     返回:
         float: Jaccard 相似度
     """
+    if not isinstance(n, int):
+        raise TypeError("n 必须为整数")
     ngrams_a = ngrams(a, n)
     ngrams_b = ngrams(b, n)
 
@@ -117,6 +135,12 @@ def simhash( tokens, hashbits = 64 ):
    返回:
        int: SimHash 指纹
    """
+    if not isinstance(tokens, list):
+        raise TypeError("tokens 必须为列表")
+    if not all(isinstance(x, str) for x in tokens):
+        raise TypeError("tokens 中所有元素必须为字符串")
+    if hashbits <= 0:
+        raise ValueError("hashbits 必须大于0")
     v = np.zeros(hashbits, dtype=int)  # 初始化权重向量（numpy数组，便于向量化）
 
     for token in tokens:
@@ -144,6 +168,8 @@ def hamming( x, y ):
     返回:
         int: 海明距离（两个数二进制表示中不同位的数量）
     """
+    if not isinstance(x, int) or not isinstance(y, int):
+        raise TypeError("hamming 输入必须为整数")
     return bin(x ^ y).count('1')  # 异或后统计1的个数
 
 
@@ -157,6 +183,8 @@ def simhash_res( orig_tokens, copy_tokens, hashbits = 64 ):
     返回:
         float: 相似度，取值范围 [0,1]
     """
+    if not isinstance(hashbits, int) or hashbits <= 0:
+        raise ValueError("hashbits 必须为正整数")
     simhash1 = simhash(orig_tokens, hashbits)   # 原文指纹
     simhash2 = simhash(copy_tokens, hashbits)   # 待测文本指纹
     distance = hamming( simhash1, simhash2 )    # 计算海明距离

@@ -10,7 +10,7 @@ main.py
 import argparse
 from similarity_functions import lcs, edit_dist, jaccard2, simhash_res
 from tool_functions import tokenize, read_file, write_result
-
+# import time
 
 def similarity_score(orig_path, copy_path):
     """
@@ -25,12 +25,12 @@ def similarity_score(orig_path, copy_path):
     """
     # 定义各个相似度指标的权重比例
     percent = {
-        'lcs': 0.15,        # LCS
-        'edit': 0.15,       # 编辑距离
-        'jaccard': 0.1,     # Jaccard
-        'simhash': 0.6      # Simhash
+        'lcs': 0.2,        # LCS
+        'edit': 0,       # 编辑距离
+        'jaccard': 0,     # Jaccard
+        'simhash': 0.8      # Simhash
     }
-
+    # start = time.time()
     # 读取原文并分词
     orig_text = read_file(orig_path)
     orig_tokens = tokenize(orig_text)
@@ -46,27 +46,39 @@ def similarity_score(orig_path, copy_path):
         raise ValueError("待检测文本为空，计算无效")
 
     # LCS 计算
-    lcs_len = lcs(orig_tokens, copy_tokens)
-    lcs_sim = lcs_len / len(orig_tokens)
+    if percent['lcs'] != 0.0:
+        lcs_len = lcs(orig_tokens, copy_tokens)
+        lcs_sim = lcs_len / len(orig_tokens)
+    else:
+        lcs_sim = 0
 
     # 编辑距离计算
-    edit_distance_val = edit_dist(orig_tokens, copy_tokens)
-    edit_distance_sim = 1 - edit_distance_val / max(
-        len(orig_tokens), len(copy_tokens), 1
-    )
+    if percent['edit'] != 0.0:
+        edit_distance_val = edit_dist(orig_tokens, copy_tokens)
+        edit_distance_sim = 1 - edit_distance_val / max(
+            len(orig_tokens), len(copy_tokens), 1
+        )
+    else:
+        edit_distance_sim = 0
 
     # Jaccard 计算
-    jaccard_sim = jaccard2(orig_tokens, copy_tokens, 2)
+    if percent['jaccard'] != 0.0:
+        jaccard_sim = jaccard2(orig_tokens, copy_tokens, 2)
+    else:
+        jaccard_sim = 0
 
     # Simhash 计算
-    simhash_sim = simhash_res(orig_tokens, copy_tokens)
+    if percent['simhash'] != 0.0:
+        simhash_sim = simhash_res(orig_tokens, copy_tokens)
+    else:
+        simhash_sim = 0
 
     # 加权计算最终相似度得分
     final_score = (
-        percent['lcs'] * lcs_sim
-        + percent['edit'] * edit_distance_sim
-        + percent['jaccard'] * jaccard_sim
-        + percent['simhash'] * simhash_sim
+        percent['lcs'] * lcs_sim +
+        percent['edit'] * edit_distance_sim +
+        percent['jaccard'] * jaccard_sim +
+        percent['simhash'] * simhash_sim
     ) * 100
 
     result = {
@@ -75,7 +87,8 @@ def similarity_score(orig_path, copy_path):
         'jaccard': jaccard_sim,
         'simhash': simhash_sim
     }
-
+    # end = time.time()
+    # print(f"程序运行时间: {end - start:.4f} 秒")
     return final_score, result
 
 

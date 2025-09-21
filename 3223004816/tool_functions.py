@@ -7,8 +7,10 @@ tool_functions.py
 提供中文文本的分词方法、文件读写与结果写入功能
 """
 
-import jieba
 import re
+import jieba
+import logging
+jieba.setLogLevel(logging.ERROR)
 # 停用词（常见语气词）
 USELESS_WORDS = {"的", "了", "啊", "吧", "吗", "呢", "哦", "嗯"}
 
